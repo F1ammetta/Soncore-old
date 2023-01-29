@@ -6,6 +6,7 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:soncore/now_playing.dart';
 import 'package:soncore/routes/routes.dart';
 import 'package:soncore/routes/songs.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -43,9 +44,7 @@ class MyApp extends StatefulWidget {
 
 enum Sorts { title, artist }
 
-void showplaying() {}
-
-int selected = 1;
+int selected = 0;
 final emmpty = {'title': '', 'artist': ''};
 
 // ignore: prefer_typing_uninitialized_variables
@@ -175,21 +174,41 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _gonext() {
+  void _gonext() async {
+    // setState(() {
+    //   var id = nowplaying['id'];
+    //   var nexti = children.indexWhere((element) => element['id'] == id) + 1;
+    //   nowplaying = children[nexti];
+    //   _play(nowplaying['id']);
+    // });
+    await player.seekToNext();
     setState(() {
-      var id = nowplaying['id'];
-      var nexti = children.indexWhere((element) => element['id'] == id) + 1;
-      nowplaying = children[nexti];
-      _play(nowplaying['id']);
+      nowplaying = children.firstWhere(
+          (element) =>
+              element['id'] ==
+              int.parse(queue.sequence[player.currentIndex!].tag.id),
+          orElse: (() {
+        return null;
+      }));
     });
   }
 
-  void _goprevious() {
+  void _goprevious() async {
+    // setState(() {
+    //   var id = nowplaying['id'];
+    //   var nexti = children.indexWhere((element) => element['id'] == id) - 1;
+    //   nowplaying = children[nexti];
+    //   _play(nowplaying['id']);
+    // });
+    await player.seekToPrevious();
     setState(() {
-      var id = nowplaying['id'];
-      var nexti = children.indexWhere((element) => element['id'] == id) - 1;
-      nowplaying = children[nexti];
-      _play(nowplaying['id']);
+      nowplaying = children.firstWhere(
+          (element) =>
+              element['id'] ==
+              int.parse(queue.sequence[player.currentIndex!].tag.id),
+          orElse: (() {
+        return null;
+      }));
     });
   }
 
@@ -206,6 +225,10 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void showplaying() {
+    print('showplaying');
+  }
+
   // ignore: prefer_final_fields
 
   Stream<PositionData> get _positionDataStream =>
@@ -219,19 +242,35 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Routes(
-          index: selected,
-          showplaying: showplaying,
-          clear: _clear,
-          getitems: _getitems,
-          gonext: _gonext,
-          goprevious: _goprevious,
-          inititems: inititems,
-          play: _play,
-          playpause: _playpause,
-          raisefrac: _raisefrac,
-          showqueries: _showqueries,
-          sort: _sort),
+      body: Stack(
+        children: [
+          Routes(
+              index: selected,
+              showplaying: showplaying,
+              clear: _clear,
+              getitems: _getitems,
+              gonext: _gonext,
+              goprevious: _goprevious,
+              inititems: inititems,
+              play: _play,
+              playpause: _playpause,
+              raisefrac: _raisefrac,
+              showqueries: _showqueries,
+              sort: _sort),
+          // TODO: Fix now platying bar not showing properly
+          Positioned(
+            left: 15,
+            bottom: 55,
+            child: NowPlaying(
+                positionDataStream: _positionDataStream,
+                gonext: _gonext,
+                goprevious: _goprevious,
+                icon: icon,
+                playpause: _playpause,
+                showplaying: showplaying),
+          )
+        ],
+      ),
       bottomNavigationBar: NavBar(updatedPage: updatePage),
     );
   }

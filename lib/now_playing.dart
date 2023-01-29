@@ -6,9 +6,7 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:text_scroll/text_scroll.dart';
 
 class NowPlaying extends StatefulWidget {
-  bool hasplayed;
   Stream<PositionData> positionDataStream;
-  dynamic nowplaying;
   IconData icon;
   void Function() goprevious;
   void Function() playpause;
@@ -17,9 +15,7 @@ class NowPlaying extends StatefulWidget {
 
   NowPlaying(
       {super.key,
-      required this.hasplayed,
       required this.positionDataStream,
-      required this.nowplaying,
       required this.gonext,
       required this.goprevious,
       required this.icon,
@@ -35,12 +31,12 @@ class _NowPlayingState extends State<NowPlaying> {
   Widget build(BuildContext context) {
     return Container(
       constraints:
-          const BoxConstraints(maxHeight: kToolbarHeight + 5, maxWidth: 385),
+          const BoxConstraints(maxHeight: kToolbarHeight + 57, maxWidth: 385),
       child: Hero(
         tag: 0,
         child: Column(
           children: [
-            widget.hasplayed
+            hasplayed
                 ? StreamBuilder<PositionData>(
                     stream: widget.positionDataStream,
                     builder: (context, snapshot) {
@@ -52,7 +48,7 @@ class _NowPlayingState extends State<NowPlaying> {
                             positionData?.bufferedPosition ?? Duration.zero,
                         timeLabelLocation: TimeLabelLocation.none,
                         thumbRadius: 0,
-                        barHeight: widget.hasplayed ? 5 : 0,
+                        barHeight: hasplayed ? 5 : 0,
                       );
                     },
                   )
@@ -65,14 +61,14 @@ class _NowPlayingState extends State<NowPlaying> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(5),
                   child: AppBar(
-                    toolbarHeight: widget.hasplayed ? kToolbarHeight : 0,
-                    leading: widget.hasplayed
+                    toolbarHeight: hasplayed ? kToolbarHeight : 0,
+                    leading: hasplayed
                         ? Padding(
                             padding: const EdgeInsets.all(4.5),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(9.0),
                               child: Image.network(
-                                'http://kwak.sytes.net/v0/cover/${widget.nowplaying['id']}',
+                                'http://kwak.sytes.net/v0/cover/${nowplaying['id']}',
                                 height: 50,
                                 width: 50,
                               ),
@@ -81,14 +77,14 @@ class _NowPlayingState extends State<NowPlaying> {
                         : const Card(
                             child: AspectRatio(aspectRatio: 1.0),
                           ),
-                    title: widget.hasplayed
+                    title: hasplayed
                         ? GestureDetector(
                             onTap: widget.showplaying,
                             child: TextScroll(
-                              widget.nowplaying['title'] +
+                              nowplaying['title'] +
                                   '  -  ' +
-                                  widget.nowplaying['artist'] +
-                                  ' ' * widget.nowplaying['title'].length,
+                                  nowplaying['artist'] +
+                                  ' ' * nowplaying['title'].length,
                               mode: TextScrollMode.endless,
                               velocity: const Velocity(
                                   pixelsPerSecond: Offset(30, 0)),
@@ -99,14 +95,14 @@ class _NowPlayingState extends State<NowPlaying> {
                     actions: [
                       IconButton(
                           onPressed: () {
-                            widget.goprevious;
+                            widget.goprevious();
                           },
                           icon: const Icon(Icons.skip_previous)),
                       IconButton(
                           onPressed: widget.playpause, icon: Icon(widget.icon)),
                       IconButton(
                           onPressed: () {
-                            widget.gonext;
+                            widget.gonext();
                           },
                           icon: const Icon(Icons.skip_next))
                     ],

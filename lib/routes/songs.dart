@@ -66,7 +66,8 @@ class _SongsPageState extends State<SongsPage> {
   void initState() {
     super.initState();
     player.setAudioSource(queue);
-    widget.inititems();
+    var done = widget.getitems();
+    done.then((value) => setState(() {}));
     if (children.isNotEmpty) children.add(emmpty);
   }
 

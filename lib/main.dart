@@ -8,7 +8,6 @@ import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:soncore/now_playing.dart';
 import 'package:soncore/routes/routes.dart';
-import 'package:soncore/routes/songs.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 // ignore: unused_element
@@ -44,7 +43,7 @@ class MyApp extends StatefulWidget {
 
 enum Sorts { title, artist }
 
-int selected = 0;
+int selected = 1;
 final emmpty = {'title': '', 'artist': ''};
 
 // ignore: prefer_typing_uninitialized_variables
@@ -181,6 +180,7 @@ class _MyAppState extends State<MyApp> {
     //   nowplaying = children[nexti];
     //   _play(nowplaying['id']);
     // });
+    print(kToolbarHeight);
     await player.seekToNext();
     setState(() {
       nowplaying = children.firstWhere(
@@ -260,7 +260,7 @@ class _MyAppState extends State<MyApp> {
           // TODO: Fix now platying bar not showing properly
           Positioned(
             left: 15,
-            bottom: 55,
+            bottom: 10,
             child: NowPlaying(
                 positionDataStream: _positionDataStream,
                 gonext: _gonext,

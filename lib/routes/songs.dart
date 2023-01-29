@@ -207,18 +207,30 @@ class _SongsPageState extends State<SongsPage> {
                   'Search: ${selectedMenu.toString().split('.')[1].replaceFirst(selectedMenu.toString().split('.')[1][0], selectedMenu.toString().split('.')[1][0].toUpperCase())}',
             ),
             controller: searchbar,
-            onChanged: (value) => widget.showqueries(value),
+            onChanged: (value) {
+              setState(() {
+                widget.showqueries(value);
+              });
+            },
           ),
           actions: [
             IconButton(
-              onPressed: widget.clear,
+              onPressed: () => {
+                setState(() {
+                  widget.clear();
+                })
+              },
               icon: const Icon(Icons.clear),
             )
           ],
         ),
         actions: [
           IconButton(
-            onPressed: widget.raisefrac,
+            onPressed: () {
+              setState(() {
+                widget.raisefrac();
+              });
+            },
             icon: const Icon(Icons.search),
           ),
           PopupMenuButton<Sorts>(
@@ -240,10 +252,14 @@ class _SongsPageState extends State<SongsPage> {
                 child: const Text('Title'),
                 onTap: () {
                   if (selectedMenu == Sorts.title) {
-                    children = children.reversed.toList();
+                    setState(() {
+                      children = children.reversed.toList();
+                    });
                   } else {
-                    selectedMenu = Sorts.title;
-                    widget.sort();
+                    setState(() {
+                      selectedMenu = Sorts.title;
+                      widget.sort();
+                    });
                   }
                 },
               ),
@@ -252,10 +268,14 @@ class _SongsPageState extends State<SongsPage> {
                 child: const Text('Artist'),
                 onTap: () {
                   if (selectedMenu == Sorts.artist) {
-                    children = children.reversed.toList();
+                    setState(() {
+                      children = children.reversed.toList();
+                    });
                   } else {
-                    selectedMenu = Sorts.artist;
-                    widget.sort();
+                    setState(() {
+                      selectedMenu = Sorts.artist;
+                      widget.sort();
+                    });
                   }
                 },
               ),
@@ -267,6 +287,7 @@ class _SongsPageState extends State<SongsPage> {
           child: RefreshIndicator(
         onRefresh: () async {
           await widget.getitems();
+          setState(() {});
           print(children.length);
         },
         child: ListView.builder(

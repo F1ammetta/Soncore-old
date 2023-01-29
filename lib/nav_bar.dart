@@ -11,7 +11,7 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavBarState extends State<NavBar> {
-  int selected = 0;
+  int selected = 1;
   @override
   Widget build(BuildContext context) {
     return NavigationBar(

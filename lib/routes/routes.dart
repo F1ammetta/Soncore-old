@@ -8,18 +8,8 @@ import 'package:soncore/routes/songscreen.dart';
 import 'package:soncore/routes/songs.dart';
 
 class Routes extends StatefulWidget {
-  AudioPlayer player;
-  Stream<PositionData> positionDataStream;
-  Sorts? selectedMenu;
   void Function() showplaying;
-  dynamic emmpty;
-  dynamic nowplaying;
-  dynamic queue;
-  double frac;
-  TextEditingController searchbar;
-  bool hasplayed;
-  dynamic children;
-  IconData icon;
+
   void Function() inititems;
   void Function() sort;
   Future<void> Function() getitems;
@@ -35,18 +25,7 @@ class Routes extends StatefulWidget {
   Routes(
       {super.key,
       required this.index,
-      required this.player,
-      required this.positionDataStream,
-      required this.selectedMenu,
       required this.showplaying,
-      required this.frac,
-      required this.children,
-      required this.emmpty,
-      required this.hasplayed,
-      required this.icon,
-      required this.nowplaying,
-      required this.queue,
-      required this.searchbar,
       required this.clear,
       required this.getitems,
       required this.gonext,
@@ -68,18 +47,7 @@ class _RoutesState extends State<Routes> {
     super.initState();
     routes.add(HomePage());
     routes.add(SongsPage(
-        player: widget.player,
-        positionDataStream: widget.positionDataStream,
-        selectedMenu: widget.selectedMenu,
         showplaying: widget.showplaying,
-        frac: widget.frac,
-        children: widget.children,
-        emmpty: widget.emmpty,
-        hasplayed: widget.hasplayed,
-        icon: widget.icon,
-        nowplaying: widget.nowplaying,
-        queue: widget.queue,
-        searchbar: widget.searchbar,
         clear: widget.clear,
         getitems: widget.getitems,
         gonext: widget.gonext,

@@ -43,36 +43,38 @@ class MyApp extends StatefulWidget {
 
 enum Sorts { title, artist }
 
-void _showplaying() {}
+void showplaying() {}
+
+int selected = 1;
+final emmpty = {'title': '', 'artist': ''};
+
+// ignore: prefer_typing_uninitialized_variables
+var nowplaying;
+
+// ignore: prefer_final_fields
+var queue = ConcatenatingAudioSource(
+  children: [],
+);
+
+double frac = 0;
+
+final searchbar = TextEditingController();
+
+var hasplayed = false;
+
+var children = [];
+
+var fullsongs = [];
+
+var icon = Icons.play_arrow;
+
+Sorts? selectedMenu = Sorts.title;
 
 class _MyAppState extends State<MyApp> {
-  int selected = 1;
-  final emmpty = {'title': '', 'artist': ''};
-
-  // ignore: prefer_typing_uninitialized_variables
-  var _nowplaying;
-
-  // ignore: prefer_final_fields
-  var _queue = ConcatenatingAudioSource(
-    children: [],
-  );
-
-  double _frac = 0;
-
-  final _searchbar = TextEditingController();
-
-  var _hasplayed = false;
-
-  var children = [];
-
-  var fullsongs = [];
-
-  var _icon = Icons.play_arrow;
-
   @override
   void initState() {
     super.initState();
-    player.setAudioSource(_queue);
+    player.setAudioSource(queue);
     inititems();
     if (!children.isNotEmpty) children.add(emmpty);
   }
@@ -117,20 +119,20 @@ class _MyAppState extends State<MyApp> {
 
   void _play(id) async {
     setState(() {
-      _nowplaying =
+      nowplaying =
           children.firstWhere((element) => element['id'] == id, orElse: (() {
         return null;
       }));
-      _hasplayed = true;
-      _icon = Icons.pause;
+      hasplayed = true;
+      icon = Icons.pause;
     });
-    await _queue.add(AudioSource.uri(
+    await queue.add(AudioSource.uri(
         Uri.parse('http://kwak.sytes.net/tracks/$id'),
         tag: MediaItem(
             id: id.toString(),
-            title: _nowplaying['title'],
-            artist: _nowplaying['artist'],
-            album: _nowplaying['album'],
+            title: nowplaying['title'],
+            artist: nowplaying['artist'],
+            album: nowplaying['album'],
             artUri: Uri.parse('http://kwak.sytes.net/v0/cover/$id'))));
     await player.seekToNext();
     player.play();
@@ -140,10 +142,10 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       if (player.playing) {
         player.pause();
-        _icon = Icons.play_arrow;
+        icon = Icons.play_arrow;
       } else {
         player.play();
-        _icon = Icons.pause;
+        icon = Icons.pause;
       }
     });
   }
@@ -169,31 +171,31 @@ class _MyAppState extends State<MyApp> {
 
   void _raisefrac() {
     setState(() {
-      _frac = _frac == 1 ? 0 : 1;
+      frac = frac == 1 ? 0 : 1;
     });
   }
 
   void _gonext() {
     setState(() {
-      var id = _nowplaying['id'];
+      var id = nowplaying['id'];
       var nexti = children.indexWhere((element) => element['id'] == id) + 1;
-      _nowplaying = children[nexti];
-      _play(_nowplaying['id']);
+      nowplaying = children[nexti];
+      _play(nowplaying['id']);
     });
   }
 
   void _goprevious() {
     setState(() {
-      var id = _nowplaying['id'];
+      var id = nowplaying['id'];
       var nexti = children.indexWhere((element) => element['id'] == id) - 1;
-      _nowplaying = children[nexti];
-      _play(_nowplaying['id']);
+      nowplaying = children[nexti];
+      _play(nowplaying['id']);
     });
   }
 
   void _clear() {
     setState(() {
-      _searchbar.clear();
+      searchbar.clear();
       children = fullsongs;
     });
   }
@@ -203,8 +205,6 @@ class _MyAppState extends State<MyApp> {
       selected = i;
     });
   }
-
-  Sorts? selectedMenu = Sorts.title;
 
   // ignore: prefer_final_fields
 
@@ -221,18 +221,7 @@ class _MyAppState extends State<MyApp> {
     return Scaffold(
       body: Routes(
           index: selected,
-          player: player,
-          positionDataStream: _positionDataStream,
-          selectedMenu: selectedMenu,
-          showplaying: _showplaying,
-          frac: _frac,
-          children: children,
-          emmpty: emmpty,
-          hasplayed: _hasplayed,
-          icon: _icon,
-          nowplaying: _nowplaying,
-          queue: _queue,
-          searchbar: _searchbar,
+          showplaying: showplaying,
           clear: _clear,
           getitems: _getitems,
           gonext: _gonext,

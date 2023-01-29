@@ -8,18 +8,7 @@ import 'package:soncore/main.dart';
 import '../now_playing.dart';
 
 class SongsPage extends StatefulWidget {
-  AudioPlayer? player;
-  Sorts? selectedMenu;
-  Stream<PositionData>? positionDataStream;
   void Function() showplaying;
-  dynamic emmpty;
-  dynamic nowplaying;
-  dynamic queue;
-  double frac;
-  TextEditingController searchbar;
-  bool hasplayed;
-  dynamic children;
-  IconData icon;
   void Function() inititems;
   void Function() sort;
   Future<void> Function() getitems;
@@ -33,18 +22,7 @@ class SongsPage extends StatefulWidget {
 
   SongsPage(
       {super.key,
-      required this.player,
-      required this.positionDataStream,
-      required this.selectedMenu,
       required this.showplaying,
-      required this.frac,
-      required this.children,
-      required this.emmpty,
-      required this.hasplayed,
-      required this.icon,
-      required this.nowplaying,
-      required this.queue,
-      required this.searchbar,
       required this.clear,
       required this.getitems,
       required this.gonext,
@@ -87,9 +65,9 @@ class _SongsPageState extends State<SongsPage> {
   @override
   void initState() {
     super.initState();
-    widget.player!.setAudioSource(widget.queue);
+    player.setAudioSource(queue);
     widget.inititems();
-    if (!widget.children.isNotEmpty) widget.children.add(widget.emmpty);
+    if (children.isNotEmpty) children.add(emmpty);
   }
 
   // void inititems() async {
@@ -220,15 +198,15 @@ class _SongsPageState extends State<SongsPage> {
           icon: Icon(Icons.menu),
         ),
         bottom: AppBar(
-          toolbarHeight: kToolbarHeight * widget.frac,
+          toolbarHeight: kToolbarHeight * frac,
           leading: Icon(Icons.search),
           title: TextField(
             decoration: InputDecoration(
               border: UnderlineInputBorder(),
               hintText:
-                  'Search: ${widget.selectedMenu.toString().split('.')[1].replaceFirst(widget.selectedMenu.toString().split('.')[1][0], widget.selectedMenu.toString().split('.')[1][0].toUpperCase())}',
+                  'Search: ${selectedMenu.toString().split('.')[1].replaceFirst(selectedMenu.toString().split('.')[1][0], selectedMenu.toString().split('.')[1][0].toUpperCase())}',
             ),
-            controller: widget.searchbar,
+            controller: searchbar,
             onChanged: (value) => widget.showqueries(value),
           ),
           actions: [
@@ -244,11 +222,11 @@ class _SongsPageState extends State<SongsPage> {
             icon: const Icon(Icons.search),
           ),
           PopupMenuButton<Sorts>(
-            initialValue: widget.selectedMenu,
+            initialValue: selectedMenu,
             // Callback that sets the selected popup menu item.
             onSelected: (Sorts item) {
               setState(() {
-                widget.selectedMenu = item;
+                selectedMenu = item;
               });
             },
             icon: const Icon(Icons.sort),
@@ -261,10 +239,10 @@ class _SongsPageState extends State<SongsPage> {
                 value: Sorts.title,
                 child: const Text('Title'),
                 onTap: () {
-                  if (widget.selectedMenu == Sorts.title) {
-                    widget.children = widget.children.reversed.toList();
+                  if (selectedMenu == Sorts.title) {
+                    children = children.reversed.toList();
                   } else {
-                    widget.selectedMenu = Sorts.title;
+                    selectedMenu = Sorts.title;
                     widget.sort();
                   }
                 },
@@ -273,10 +251,10 @@ class _SongsPageState extends State<SongsPage> {
                 value: Sorts.artist,
                 child: const Text('Artist'),
                 onTap: () {
-                  if (widget.selectedMenu == Sorts.artist) {
-                    widget.children = widget.children.reversed.toList();
+                  if (selectedMenu == Sorts.artist) {
+                    children = children.reversed.toList();
                   } else {
-                    widget.selectedMenu = Sorts.artist;
+                    selectedMenu = Sorts.artist;
                     widget.sort();
                   }
                 },
@@ -289,10 +267,10 @@ class _SongsPageState extends State<SongsPage> {
           child: RefreshIndicator(
         onRefresh: () async {
           await widget.getitems();
-          print(widget.children.length);
+          print(children.length);
         },
         child: ListView.builder(
-          itemCount: widget.children.length,
+          itemCount: children.length,
           // prototypeItem: ListTile(
           //   title: Text(children.first['title']),
           //   subtitle: Text(children.first['artist']),
@@ -303,17 +281,17 @@ class _SongsPageState extends State<SongsPage> {
           // ),
           itemBuilder: (context, i) {
             return ListTile(
-              title: Text(widget.children[i]['title']),
-              subtitle: Text(widget.children[i]['artist']),
+              title: Text(children[i]['title']),
+              subtitle: Text(children[i]['artist']),
               leading: ClipRRect(
                 borderRadius: BorderRadius.circular(10.0),
                 child: Image.network(
-                  'http://kwak.sytes.net/v0/cover/${widget.children[i]['id']}',
+                  'http://kwak.sytes.net/v0/cover/${children[i]['id']}',
                   height: 60,
                   width: 60,
                 ),
               ),
-              onTap: () => widget.play(widget.children[i]['id']),
+              onTap: () => widget.play(children[i]['id']),
             );
           },
         ),

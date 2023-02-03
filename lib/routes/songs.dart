@@ -47,7 +47,6 @@ class _SongsPageState extends State<SongsPage> {
     player.setAudioSource(queue);
     var done = widget.getitems();
     done.then((value) => setState(() {}));
-    if (children.isNotEmpty) children.add(emmpty);
   }
 
   @override
@@ -164,19 +163,21 @@ class _SongsPageState extends State<SongsPage> {
           //       .initQueue(playlist: children, currentIndex: null)),
           // ),
           itemBuilder: (context, i) {
-            return ListTile(
-              title: Text(children[i]['title']),
-              subtitle: Text(children[i]['artist']),
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(10.0),
-                child: Image.network(
-                  'http://kwak.sytes.net/v0/cover/${children[i]['id']}',
-                  height: 60,
-                  width: 60,
-                ),
-              ),
-              onTap: () => widget.play(children[i]['id']),
-            );
+            return children.isNotEmpty
+                ? ListTile(
+                    title: Text(children[i]['title']),
+                    subtitle: Text(children[i]['artist']),
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.network(
+                        'http://kwak.sytes.net/v0/cover/${children[i]['id']}',
+                        height: 60,
+                        width: 60,
+                      ),
+                    ),
+                    onTap: () => widget.play(children[i]['id']),
+                  )
+                : const Center(child: CircularProgressIndicator());
           },
         ),
       )),

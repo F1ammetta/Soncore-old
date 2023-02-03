@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:soncore/nav_bar.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -44,7 +45,7 @@ class MyApp extends StatefulWidget {
 enum Sorts { title, artist }
 
 int selected = 1;
-final emmpty = {'title': '', 'artist': ''};
+// final emmpty = {'title': '', 'artist': '', 'id': 0};
 
 // ignore: prefer_typing_uninitialized_variables
 var nowplaying;
@@ -74,7 +75,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     player.setAudioSource(queue);
     inititems();
-    if (!children.isNotEmpty) children.add(emmpty);
+    // if (!children.isNotEmpty) children.add(emmpty);
   }
 
   void inititems() async {
@@ -93,7 +94,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getitems() async {
     try {
       var res = await get(Uri.parse('http://kwak.sytes.net/v0/all'));
-      var data = jsonDecode(utf8.decode(res.bodyBytes)) as List;
+
+      var body = utf8.decode(res.bodyBytes);
+      var data = jsonDecode(body) as List;
       var temp = [];
       for (var song in data) {
         temp.add(song);
@@ -106,11 +109,10 @@ class _MyAppState extends State<MyApp> {
         }
       });
       _sort();
-      print(children.length);
     } catch (err) {
       setState(() {
         children.clear();
-        children.add(emmpty);
+        // children.add(emmpty);
       });
     }
   }
@@ -161,7 +163,7 @@ class _MyAppState extends State<MyApp> {
             .toLowerCase()
             .startsWith(query.toLowerCase());
       }).toList();
-      if (children.isEmpty) children.add(emmpty);
+      // if (children.isEmpty) children.add(emmpty);
       // children.removeWhere((element) {
       // });
     });

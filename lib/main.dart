@@ -63,6 +63,8 @@ var hasplayed = false;
 
 var children = [];
 
+var albums = [];
+
 var fullsongs = [];
 
 var icon = Icons.play_arrow;
@@ -91,7 +93,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> _getitems() async {
+  Future<void> _getsongs() async {
     try {
       var res = await get(Uri.parse('http://kwak.sytes.net/v0/all'));
 
@@ -114,6 +116,46 @@ class _MyAppState extends State<MyApp> {
         children.clear();
         // children.add(emmpty);
       });
+    }
+  }
+
+  void _sortAlbums() {
+    var tem = albums;
+    setState(() {
+      albums = tem;
+    });
+  }
+
+  Future<void> _getalbums() async {
+    try {
+      var res = await get(Uri.parse('http://kwak.sytes.net/v0/album/all'));
+
+      var body = utf8.decode(res.bodyBytes);
+      var data = jsonDecode(body) as List;
+      var temp = [];
+      for (var album in data) {
+        if (album == null) continue;
+        temp.add(album);
+      }
+      setState(() {
+        if (temp.length != albums.length) {
+          albums = temp;
+        }
+      });
+      _sortAlbums();
+    } catch (err) {
+      setState(() {
+        albums.clear();
+        // children.add(emmpty);
+      });
+    }
+  }
+
+  Future<void> _getitems() async {
+    if (selected == 1) {
+      await _getsongs();
+    } else if (selected == 2) {
+      await _getalbums();
     }
   }
 

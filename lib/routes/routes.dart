@@ -58,7 +58,18 @@ class _RoutesState extends State<Routes> {
         raisefrac: widget.raisefrac,
         showqueries: widget.showqueries,
         sort: widget.sort));
-    routes.add(AlbumsPage());
+    routes.add(AlbumsPage(
+        showplaying: widget.showplaying,
+        clear: widget.clear,
+        getitems: widget.getitems,
+        gonext: widget.gonext,
+        goprevious: widget.goprevious,
+        inititems: widget.inititems,
+        play: widget.play,
+        playpause: widget.playpause,
+        raisefrac: widget.raisefrac,
+        showqueries: widget.showqueries,
+        sort: widget.sort));
     routes.add(PlaylistsPage());
     // routes.add(PlayingScreen(
     //     positionDataStream: widget.positionDataStream,

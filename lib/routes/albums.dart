@@ -1,8 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:soncore/main.dart';
 
+// ignore: must_be_immutable
 class AlbumsPage extends StatefulWidget {
   void Function() showplaying;
   void Function() inititems;
@@ -53,10 +52,10 @@ class _AlbumsPageState extends State<AlbumsPage> {
         ),
         bottom: AppBar(
           toolbarHeight: kToolbarHeight * frac,
-          leading: Icon(Icons.search),
+          leading: const Icon(Icons.search),
           title: TextField(
             decoration: InputDecoration(
-              border: UnderlineInputBorder(),
+              border: const UnderlineInputBorder(),
               hintText:
                   'Search: ${selectedMenu.toString().split('.')[1].replaceFirst(selectedMenu.toString().split('.')[1][0], selectedMenu.toString().split('.')[1][0].toUpperCase())}',
             ),
@@ -146,14 +145,6 @@ class _AlbumsPageState extends State<AlbumsPage> {
         },
         child: ListView.builder(
           itemCount: albums.length,
-          // prototypeItem: ListTile(
-          //   title: Text(children.first['title']),
-          //   subtitle: Text(children.first['artist']),
-          //   leading: Image.network(
-          //       'http://kwak.sytes.net/v0/cover/${children.first['id']}'),
-          //   onTap: (() => widget.audioHandler
-          //       .initQueue(playlist: children, currentIndex: null)),
-          // ),
           itemBuilder: (context, i) {
             return albums.isNotEmpty
                 ? ListTile(

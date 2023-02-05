@@ -1,12 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:soncore/main.dart';
 
-import '../now_playing.dart';
-
+// ignore: must_be_immutable
 class SongsPage extends StatefulWidget {
   void Function() showplaying;
   void Function() inititems;
@@ -60,10 +55,10 @@ class _SongsPageState extends State<SongsPage> {
         ),
         bottom: AppBar(
           toolbarHeight: kToolbarHeight * frac,
-          leading: Icon(Icons.search),
+          leading: const Icon(Icons.search),
           title: TextField(
             decoration: InputDecoration(
-              border: UnderlineInputBorder(),
+              border: const UnderlineInputBorder(),
               hintText:
                   'Search: ${selectedMenu.toString().split('.')[1].replaceFirst(selectedMenu.toString().split('.')[1][0], selectedMenu.toString().split('.')[1][0].toUpperCase())}',
             ),
@@ -149,9 +144,9 @@ class _SongsPageState extends State<SongsPage> {
         onRefresh: () async {
           await widget.getitems();
           setState(() {});
-          print(children.length);
         },
         child: ListView.builder(
+          padding: EdgeInsets.only(top: 10.0, bottom: 80.0),
           itemCount: children.length,
           // prototypeItem: ListTile(
           //   title: Text(children.first['title']),

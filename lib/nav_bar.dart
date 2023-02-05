@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:soncore/main.dart';
 
 class NavBar extends StatefulWidget {
   void Function(int) updatedPage;
@@ -15,6 +16,7 @@ class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
+      height: barheight,
       onDestinationSelected: (v) {
         setState(() {
           selected = v;

@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:soncore/nav_bar.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -45,10 +44,13 @@ class MyApp extends StatefulWidget {
 enum Sorts { title, artist }
 
 int selected = 1;
+int previous = 1;
 // final emmpty = {'title': '', 'artist': '', 'id': 0};
 
 // ignore: prefer_typing_uninitialized_variables
 var nowplaying;
+
+var barheight = 80.0;
 
 // ignore: prefer_final_fields
 var queue = ConcatenatingAudioSource(
@@ -71,16 +73,27 @@ var icon = Icons.play_arrow;
 
 Sorts? selectedMenu = Sorts.title;
 
+Stream<PositionData> get positionDataStream =>
+    Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
+        player.positionStream,
+        player.bufferedPositionStream,
+        player.durationStream,
+        (position, bufferedPosition, duration) => PositionData(
+            position, bufferedPosition, duration ?? Duration.zero));
+
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    setState(() {});
     player.setAudioSource(queue);
     inititems();
     // if (!children.isNotEmpty) children.add(emmpty);
   }
 
   void inititems() async {
+    super.initState();
+    setState(() {});
     await _getitems();
   }
 
@@ -168,16 +181,21 @@ class _MyAppState extends State<MyApp> {
       hasplayed = true;
       icon = Icons.pause;
     });
-    await queue.add(AudioSource.uri(
-        Uri.parse('http://kwak.sytes.net/tracks/$id'),
-        tag: MediaItem(
-            id: id.toString(),
-            title: nowplaying['title'],
-            artist: nowplaying['artist'],
-            album: nowplaying['album'],
-            artUri: Uri.parse('http://kwak.sytes.net/v0/cover/$id'))));
+    await queue
+        .add(AudioSource.uri(Uri.parse('http://kwak.sytes.net/tracks/$id'),
+            tag: MediaItem(
+              id: id.toString(),
+              title: nowplaying['title'],
+              artist: nowplaying['artist'],
+              album: nowplaying['album'],
+              artUri: Uri.parse('http://kwak.sytes.net/v0/cover/$id'),
+            )));
     await player.seekToNext();
     player.play();
+  }
+
+  void update() {
+    setState(() {});
   }
 
   void _playpause() {
@@ -217,14 +235,13 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _gonext() async {
+  Future<void> _gonext() async {
     // setState(() {
     //   var id = nowplaying['id'];
     //   var nexti = children.indexWhere((element) => element['id'] == id) + 1;
     //   nowplaying = children[nexti];
     //   _play(nowplaying['id']);
     // });
-    print(kToolbarHeight);
     await player.seekToNext();
     setState(() {
       nowplaying = children.firstWhere(
@@ -237,7 +254,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  void _goprevious() async {
+  Future<void> _goprevious() async {
     // setState(() {
     //   var id = nowplaying['id'];
     //   var nexti = children.indexWhere((element) => element['id'] == id) - 1;
@@ -270,18 +287,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   void showplaying() {
-    print('showplaying');
+    setState(() {
+      previous = selected;
+      selected = 4;
+    });
   }
 
   // ignore: prefer_final_fields
-
-  Stream<PositionData> get _positionDataStream =>
-      Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
-          player.positionStream,
-          player.bufferedPositionStream,
-          player.durationStream,
-          (position, bufferedPosition, duration) => PositionData(
-              position, bufferedPosition, duration ?? Duration.zero));
 
   @override
   Widget build(BuildContext context) {
@@ -289,6 +301,7 @@ class _MyAppState extends State<MyApp> {
       body: Stack(
         children: [
           Routes(
+              update: update,
               index: selected,
               showplaying: showplaying,
               clear: _clear,
@@ -301,12 +314,11 @@ class _MyAppState extends State<MyApp> {
               raisefrac: _raisefrac,
               showqueries: _showqueries,
               sort: _sort),
-          // TODO: Fix now platying bar not showing properly
           Positioned(
             left: 15,
             bottom: 10,
             child: NowPlaying(
-                positionDataStream: _positionDataStream,
+                positionDataStream: positionDataStream,
                 gonext: _gonext,
                 goprevious: _goprevious,
                 icon: icon,

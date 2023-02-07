@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:soncore/nav_bar.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -49,6 +50,8 @@ int previous = 1;
 
 // ignore: prefer_typing_uninitialized_variables
 var nowplaying;
+
+var album;
 
 var barheight = 80.0;
 
@@ -100,7 +103,10 @@ class _MyAppState extends State<MyApp> {
   void _sort() {
     String? value = selectedMenu.toString().split('.')[1];
     var temp = children;
-    temp.sort(((a, b) => a[value].compareTo(b[value])));
+    temp.sort(((a, b) => a[value]
+        .toString()
+        .toUpperCase()
+        .compareTo(b[value].toString().toUpperCase())));
     setState(() {
       children = temp;
     });
@@ -112,15 +118,11 @@ class _MyAppState extends State<MyApp> {
 
       var body = utf8.decode(res.bodyBytes);
       var data = jsonDecode(body) as List;
-      var temp = [];
-      for (var song in data) {
-        temp.add(song);
-      }
 
       setState(() {
-        if (temp.length != children.length) {
-          children = temp;
-          fullsongs = temp;
+        if (data.length != children.length) {
+          children = data;
+          fullsongs = data;
         }
       });
       _sort();
@@ -172,26 +174,54 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  void _play(id) async {
+  // void _play(id) async {
+  //   setState(() {
+  //     nowplaying =
+  //         children.firstWhere((element) => element['id'] == id, orElse: (() {
+  //       return null;
+  //     }));
+  //     hasplayed = true;
+  //     icon = Icons.pause;
+  //   });
+  //   await queue
+  //       .add(AudioSource.uri(Uri.parse('http://kwak.sytes.net/tracks/$id'),
+  //           tag: MediaItem(
+  //             id: id.toString(),
+  //             title: nowplaying['title'],
+  //             artist: nowplaying['artist'],
+  //             album: nowplaying['album'],
+  //             artUri: Uri.parse('http://kwak.sytes.net/v0/cover/$id'),
+  //           )));
+  //   await player.seekToNext();
+  //   player.play();
+  // }
+
+  Future<void> _play(id) async {
+    if (children.length != queue.length) {
+      queue.clear();
+      for (var song in children) {
+        await queue.add(AudioSource.uri(
+            Uri.parse('http://kwak.sytes.net/tracks/${song['id']}'),
+            tag: MediaItem(
+              id: song['id'].toString(),
+              title: song['title'],
+              artist: song['artist'],
+              album: song['album'],
+              artUri: Uri.parse('http://kwak.sytes.net/v0/cover/${song['id']}'),
+            )));
+      }
+    }
     setState(() {
       nowplaying =
           children.firstWhere((element) => element['id'] == id, orElse: (() {
         return null;
       }));
+      var index = children.indexOf(nowplaying);
+      player.seek(Duration.zero, index: index);
+      player.play();
       hasplayed = true;
       icon = Icons.pause;
     });
-    await queue
-        .add(AudioSource.uri(Uri.parse('http://kwak.sytes.net/tracks/$id'),
-            tag: MediaItem(
-              id: id.toString(),
-              title: nowplaying['title'],
-              artist: nowplaying['artist'],
-              album: nowplaying['album'],
-              artUri: Uri.parse('http://kwak.sytes.net/v0/cover/$id'),
-            )));
-    await player.seekToNext();
-    player.play();
   }
 
   void update() {
@@ -221,7 +251,7 @@ class _MyAppState extends State<MyApp> {
         return element[selectedMenu.toString().split('.')[1]]
             .toString()
             .toLowerCase()
-            .startsWith(query.toLowerCase());
+            .contains(query.toLowerCase());
       }).toList();
       // if (children.isEmpty) children.add(emmpty);
       // children.removeWhere((element) {

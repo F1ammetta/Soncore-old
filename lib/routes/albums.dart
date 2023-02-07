@@ -14,6 +14,7 @@ class AlbumsPage extends StatefulWidget {
   void Function() gonext;
   void Function() goprevious;
   void Function() clear;
+  void Function() update;
   AlbumsPage(
       {super.key,
       required this.showplaying,
@@ -26,7 +27,8 @@ class AlbumsPage extends StatefulWidget {
       required this.playpause,
       required this.raisefrac,
       required this.showqueries,
-      required this.sort});
+      required this.sort,
+      required this.update});
 
   @override
   State<AlbumsPage> createState() => _AlbumsPageState();
@@ -148,6 +150,13 @@ class _AlbumsPageState extends State<AlbumsPage> {
           itemBuilder: (context, i) {
             return albums.isNotEmpty
                 ? ListTile(
+                    onTap: () {
+                      setState(() {
+                        album = albums[i]['id'];
+                        selected = 6;
+                      });
+                      widget.update();
+                    },
                     title: albums[i]['title'] != null
                         ? Text(albums[i]['title'])
                         : const Text('Unknown Album'),

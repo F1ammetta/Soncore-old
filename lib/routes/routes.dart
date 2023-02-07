@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:soncore/main.dart';
 // import 'package:just_audio/just_audio.dart';
 // import 'package:soncore/main.dart';
 import 'package:soncore/routes/albums.dart';
+import 'package:soncore/routes/albumscreen.dart';
 import 'package:soncore/routes/home.dart';
 import 'package:soncore/routes/playlists.dart';
+import 'package:soncore/routes/queue.dart';
 import 'package:soncore/routes/songscreen.dart';
 import 'package:soncore/routes/songs.dart';
 
@@ -13,7 +16,8 @@ class Routes extends StatefulWidget {
   void Function() inititems;
   void Function() sort;
   Future<void> Function() getitems;
-  void Function(int) play;
+
+  Future<void> Function(int) play;
   void Function(String) showqueries;
   void Function() raisefrac;
   void Function() playpause;
@@ -48,6 +52,7 @@ class _RoutesState extends State<Routes> {
     super.initState();
     routes.add(const HomePage());
     routes.add(SongsPage(
+        update: widget.update,
         showplaying: widget.showplaying,
         clear: widget.clear,
         getitems: widget.getitems,
@@ -70,13 +75,19 @@ class _RoutesState extends State<Routes> {
         playpause: widget.playpause,
         raisefrac: widget.raisefrac,
         showqueries: widget.showqueries,
-        sort: widget.sort));
+        sort: widget.sort,
+        update: widget.update));
     routes.add(const PlaylistsPage());
     routes.add(PlayingScreen(
         update: widget.update,
         gonext: widget.gonext,
         goprevious: widget.goprevious,
         playpause: widget.playpause));
+    routes.add(QueuePage(
+      update: widget.update,
+    ));
+    routes.add(AlbumScreen(
+        sort: widget.sort, play: widget.play, update: widget.update));
   }
 
   @override

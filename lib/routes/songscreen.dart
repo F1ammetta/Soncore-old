@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:soncore/main.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:text_scroll/text_scroll.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -28,6 +29,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
   var icon;
   bool? wasplaying;
   bool lyrics = false;
+  bool shuffle = player.shuffleModeEnabled;
 
   @override
   void initState() {
@@ -67,7 +69,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
             Column(
               children: [
                 Container(
-                  height: 150,
+                  height: 120,
                 ),
                 StreamBuilder(
                   stream: player.sequenceStateStream,
@@ -91,14 +93,14 @@ class _PlayingScreenState extends State<PlayingScreen> {
                               },
                               child: Image.network(
                                 'http://kwak.sytes.net/v0/cover/${metadata.id}',
-                                width: 300,
-                                height: 300,
+                                width: 350,
+                                height: 350,
                               ),
                             ),
                           ),
                         ),
                         Container(
-                          height: 20,
+                          height: 50,
                         ),
                         Center(
                             child: SizedBox(
@@ -115,7 +117,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
                           ),
                         )),
                         Container(
-                          height: 20,
+                          height: 30,
                         ),
                         Center(
                             child: SizedBox(
@@ -139,7 +141,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
                   height: 35,
                 ),
                 SizedBox(
-                  width: 300,
+                  width: 350,
                   child: StreamBuilder<PositionData>(
                     stream: positionDataStream,
                     builder: (context, snapshot) {
@@ -198,6 +200,46 @@ class _PlayingScreenState extends State<PlayingScreen> {
                         setState(() {});
                       },
                     ),
+                  ],
+                ),
+                Container(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      iconSize: 30,
+                      color: shuffle
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
+                      icon: const Icon(Icons.shuffle),
+                      onPressed: () {
+                        player
+                            .setShuffleModeEnabled(!player.shuffleModeEnabled);
+                        setState(() {
+                          shuffle = !shuffle;
+                        });
+                      },
+                    ),
+                    IconButton(
+                      iconSize: 30,
+                      icon: const Icon(Icons.repeat),
+                      onPressed: () {
+                        player.setLoopMode(LoopMode.values[
+                            (player.loopMode.index + 1) %
+                                LoopMode.values.length]);
+                      },
+                    ),
+                    IconButton(
+                        iconSize: 30,
+                        icon: const Icon(Icons.queue_music),
+                        onPressed: () {
+                          setState(() {
+                            selected = 5;
+                            widget.update();
+                          });
+                        }),
                   ],
                 ),
               ],

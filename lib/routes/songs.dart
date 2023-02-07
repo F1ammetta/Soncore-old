@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:soncore/main.dart';
 
 // ignore: must_be_immutable
@@ -7,16 +11,18 @@ class SongsPage extends StatefulWidget {
   void Function() inititems;
   void Function() sort;
   Future<void> Function() getitems;
-  void Function(int) play;
+  Future<void> Function(int) play;
   void Function() playpause;
   void Function(String) showqueries;
   void Function() raisefrac;
   void Function() gonext;
   void Function() goprevious;
   void Function() clear;
+  void Function() update;
 
   SongsPage(
       {super.key,
+      required this.update,
       required this.showplaying,
       required this.clear,
       required this.getitems,
@@ -41,6 +47,11 @@ class _SongsPageState extends State<SongsPage> {
     super.initState();
     var done = widget.getitems();
     done.then((value) => setState(() {}));
+  }
+
+  void plai(int id) async {
+    await widget.play(id);
+    setState(() {});
   }
 
   @override
@@ -74,6 +85,7 @@ class _SongsPageState extends State<SongsPage> {
               onPressed: () => {
                 setState(() {
                   widget.clear();
+                  widget.raisefrac();
                 })
               },
               icon: const Icon(Icons.clear),
@@ -145,34 +157,43 @@ class _SongsPageState extends State<SongsPage> {
           await widget.getitems();
           setState(() {});
         },
-        child: ListView.builder(
-          padding: EdgeInsets.only(top: 10.0, bottom: 80.0),
-          itemCount: children.length,
-          // prototypeItem: ListTile(
-          //   title: Text(children.first['title']),
-          //   subtitle: Text(children.first['artist']),
-          //   leading: Image.network(
-          //       'http://kwak.sytes.net/v0/cover/${children.first['id']}'),
-          //   onTap: (() => widget.audioHandler
-          //       .initQueue(playlist: children, currentIndex: null)),
-          // ),
-          itemBuilder: (context, i) {
-            return children.isNotEmpty
-                ? ListTile(
-                    title: Text(children[i]['title']),
-                    subtitle: Text(children[i]['artist']),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        'http://kwak.sytes.net/v0/cover/${children[i]['id']}',
-                        height: 60,
-                        width: 60,
+        child: Scrollbar(
+          interactive: true,
+          child: ListView.builder(
+            padding: const EdgeInsets.only(bottom: 80.0),
+            itemCount: children.length,
+            itemBuilder: (context, i) {
+              var songs = player.audioSource as ConcatenatingAudioSource;
+              var id;
+              if (songs.length > 0) {
+                var song = songs[player.currentIndex ?? 0] as UriAudioSource;
+                id = int.parse(song.tag.id);
+              }
+              return children.isNotEmpty
+                  ? GestureDetector(
+                      child: ListTile(
+                        selected: id == children[i]['id'],
+                        selectedTileColor: Theme.of(context).primaryColor,
+                        title: Text(children[i]['title']),
+                        subtitle: Text(children[i]['artist']),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.network(
+                            'http://kwak.sytes.net/v0/cover/${children[i]['id']}',
+                            height: 60,
+                            width: 60,
+                          ),
+                        ),
+                        trailing: Text(
+                            '${(children[i]['duration'] / 60).floor() < 10 ? (children[i]['duration'] / 60).floor().toString().padLeft(2, '0') : (children[i]['duration'] / 60).floor()}:${(children[i]['duration'] % 60).floor() < 10 ? (children[i]['duration'] % 60).floor().toString().padLeft(2, '0') : (children[i]['duration'] % 60).floor()}'),
+                        onTap: () {
+                          plai(children[i]['id']);
+                        },
                       ),
-                    ),
-                    onTap: () => widget.play(children[i]['id']),
-                  )
-                : const Center(child: CircularProgressIndicator());
-          },
+                    )
+                  : const Center();
+            },
+          ),
         ),
       )),
     );

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:soncore/main.dart';
 
 // ignore: must_be_immutable
@@ -41,6 +42,9 @@ class SongsPage extends StatefulWidget {
 
 class _SongsPageState extends State<SongsPage> {
   _SongsPageState();
+
+  int? selectedsong;
+  double offset = 0;
 
   @override
   void initState() {
@@ -171,7 +175,40 @@ class _SongsPageState extends State<SongsPage> {
               }
               return children.isNotEmpty
                   ? GestureDetector(
+                      onHorizontalDragUpdate: (details) {
+                        if (details.delta.dx > 0) {
+                          selectedsong = i;
+                          setState(() {
+                            if (offset < 80) offset += details.delta.dx;
+                          });
+                        }
+                      },
+                      onHorizontalDragEnd: (details) {
+                        offset = 0;
+                        selectedsong = null;
+                        if (details.primaryVelocity! > 0) {
+                          queue.insert(
+                              player.currentIndex! + 1,
+                              AudioSource.uri(
+                                Uri.parse(
+                                    'http://kwak.sytes.net/tracks/${children[i]['id']}'),
+                                tag: MediaItem(
+                                  id: children[i]['id'].toString(),
+                                  album: children[i]['album'],
+                                  title: children[i]['title'],
+                                  artist: children[i]['artist'],
+                                  duration: Duration(
+                                      seconds: children[i]['duration'].toInt()),
+                                  artUri: Uri.parse(
+                                      'http://kwak.sytes.net/v0/cover/${children[i]['id']}'),
+                                ),
+                              ));
+                        }
+                      },
                       child: ListTile(
+                        contentPadding: selectedsong == i
+                            ? EdgeInsets.only(left: offset)
+                            : null,
                         selected: id == children[i]['id'],
                         selectedTileColor: Theme.of(context).primaryColor,
                         title: Text(children[i]['title']),

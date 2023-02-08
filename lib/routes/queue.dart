@@ -33,6 +33,7 @@ class _QueuePageState extends State<QueuePage> {
                     });
                     widget.update();
                     player.seek(Duration.zero, index: index);
+                    setState(() {});
                   },
                   title: Text(song.tag.title),
                   subtitle: Text(song.tag.artist),
@@ -45,7 +46,7 @@ class _QueuePageState extends State<QueuePage> {
                     ),
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.delete),
+                    icon: const Icon(Icons.close),
                     onPressed: () {
                       setState(() {
                         queue.removeAt(index);

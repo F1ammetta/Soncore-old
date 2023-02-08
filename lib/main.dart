@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:soncore/nav_bar.dart';
 import 'package:dynamic_color/dynamic_color.dart';
@@ -51,6 +50,7 @@ int previous = 1;
 // ignore: prefer_typing_uninitialized_variables
 var nowplaying;
 
+// ignore: prefer_typing_uninitialized_variables
 var album;
 
 var barheight = 80.0;

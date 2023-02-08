@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -168,7 +165,7 @@ class _SongsPageState extends State<SongsPage> {
             itemCount: children.length,
             itemBuilder: (context, i) {
               var songs = player.audioSource as ConcatenatingAudioSource;
-              var id;
+              int? id;
               if (songs.length > 0) {
                 var song = songs[player.currentIndex ?? 0] as UriAudioSource;
                 id = int.parse(song.tag.id);

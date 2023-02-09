@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:soncore/main.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 
+// ignore: must_be_immutable
 class QueuePage extends StatefulWidget {
   void Function() update;
   QueuePage({super.key, required this.update});

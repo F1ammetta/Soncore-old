@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:soncore/main.dart';
 import 'package:just_audio/just_audio.dart';
@@ -27,6 +29,8 @@ class PlayingScreen extends StatefulWidget {
 class _PlayingScreenState extends State<PlayingScreen> {
   // ignore: prefer_typing_uninitialized_variables
   var icon;
+  double offset = 0.0;
+  double onset = 0.0;
   bool? wasplaying;
   bool lyrics = false;
   bool shuffle = player.shuffleModeEnabled;
@@ -71,74 +75,106 @@ class _PlayingScreenState extends State<PlayingScreen> {
                 Container(
                   height: 120,
                 ),
-                StreamBuilder(
-                  stream: player.sequenceStateStream,
-                  builder: ((context, snapshot) {
-                    final sequenceState = snapshot.data;
-                    if (sequenceState?.sequence.isEmpty ?? true) {
-                      return const SizedBox.shrink();
+                GestureDetector(
+                  onHorizontalDragUpdate: (details) {
+                    if (details.delta.dx > 0) {
+                      if (offset < 150) {
+                        setState(() {
+                          offset += details.delta.dx;
+                        });
+                      }
                     }
-                    final metadata =
-                        sequenceState!.currentSource!.tag as MediaItem;
-                    return Column(
-                      children: [
-                        Center(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  lyrics = true;
-                                });
-                              },
-                              child: Image.network(
-                                'http://kwak.sytes.net/v0/cover/${metadata.id}',
-                                width: 350,
-                                height: 350,
+                    if (details.delta.dx < 0) {
+                      if (offset < 150) {
+                        setState(() {
+                          onset -= details.delta.dx;
+                        });
+                      }
+                    }
+                  },
+                  onHorizontalDragEnd: (details) {
+                    setState(() {
+                      offset = 0;
+                      onset = 0;
+                    });
+                    if (details.primaryVelocity! > 0) {
+                      widget.goprevious();
+                    } else {
+                      widget.gonext();
+                    }
+                  },
+                  child: StreamBuilder(
+                    stream: player.sequenceStateStream,
+                    builder: ((context, snapshot) {
+                      final sequenceState = snapshot.data;
+                      if (sequenceState?.sequence.isEmpty ?? true) {
+                        return const SizedBox.shrink();
+                      }
+                      final metadata =
+                          sequenceState!.currentSource!.tag as MediaItem;
+                      return Padding(
+                        padding: EdgeInsets.only(left: offset, right: onset),
+                        child: Column(
+                          children: [
+                            Center(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(40),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      lyrics = true;
+                                    });
+                                  },
+                                  child: Image.network(
+                                    'http://kwak.sytes.net/v0/cover/${metadata.id}',
+                                    width: 350,
+                                    height: 350,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                        Container(
-                          height: 50,
-                        ),
-                        Center(
-                            child: SizedBox(
-                          width: 311,
-                          child: Center(
-                            child: TextScroll(
-                              metadata.title,
-                              style: const TextStyle(fontSize: 30),
-                              velocity: const Velocity(
-                                  pixelsPerSecond: Offset(30, 0)),
-                              textAlign: TextAlign.center,
-                              intervalSpaces: 15,
+                            Container(
+                              height: 50,
                             ),
-                          ),
-                        )),
-                        Container(
-                          height: 30,
-                        ),
-                        Center(
-                            child: SizedBox(
-                          width: 311,
-                          child: Center(
-                            child: TextScroll(
-                              '${metadata.artist}',
-                              style: const TextStyle(fontSize: 20),
-                              velocity: const Velocity(
-                                  pixelsPerSecond: Offset(30, 0)),
-                              textAlign: TextAlign.center,
-                              intervalSpaces: 15,
+                            Center(
+                                child: SizedBox(
+                              width: 311,
+                              child: Center(
+                                child: TextScroll(
+                                  metadata.title,
+                                  style: const TextStyle(fontSize: 30),
+                                  velocity: const Velocity(
+                                      pixelsPerSecond: Offset(30, 0)),
+                                  textAlign: TextAlign.center,
+                                  intervalSpaces: 15,
+                                ),
+                              ),
+                            )),
+                            Container(
+                              height: 30,
                             ),
-                          ),
-                        )),
-                      ],
-                    );
-                  }),
-                ),
-                Container(
-                  height: 35,
+                            Center(
+                                child: SizedBox(
+                              width: 311,
+                              child: Center(
+                                child: TextScroll(
+                                  '${metadata.artist}',
+                                  style: const TextStyle(fontSize: 20),
+                                  velocity: const Velocity(
+                                      pixelsPerSecond: Offset(30, 0)),
+                                  textAlign: TextAlign.center,
+                                  intervalSpaces: 15,
+                                ),
+                              ),
+                            )),
+                            Container(
+                              height: 35,
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
                 ),
                 SizedBox(
                   width: 350,
@@ -217,6 +253,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
                       onPressed: () {
                         player
                             .setShuffleModeEnabled(!player.shuffleModeEnabled);
+                        player.shuffle();
                         setState(() {
                           shuffle = !shuffle;
                         });
@@ -224,11 +261,17 @@ class _PlayingScreenState extends State<PlayingScreen> {
                     ),
                     IconButton(
                       iconSize: 30,
-                      icon: const Icon(Icons.repeat),
+                      icon: player.loopMode.index == 1
+                          ? const Icon(Icons.repeat_one)
+                          : const Icon(Icons.repeat),
+                      color: player.loopMode.index != 0
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.white,
                       onPressed: () {
                         player.setLoopMode(LoopMode.values[
                             (player.loopMode.index + 1) %
                                 LoopMode.values.length]);
+                        setState(() {});
                       },
                     ),
                     IconButton(

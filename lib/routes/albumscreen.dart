@@ -24,7 +24,8 @@ class _AlbumScreenState extends State<AlbumScreen> {
   var songs = [];
 
   Future<void> _play(id) async {
-    if (songs.length != queue.length) {
+    var q = queue[0] as UriAudioSource;
+    if (songs.first['album'] != q.tag.album) {
       queue.clear();
       for (var song in songs) {
         await queue.add(AudioSource.uri(
@@ -57,11 +58,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       var res = await get(Uri.parse('http://kwak.sytes.net/v0/album/$album'));
       var body = utf8.decode(res.bodyBytes);
       var data = jsonDecode(body) as List;
-      setState(() {
-        if (data.length != children.length) {
-          songs = data;
-        }
-      });
+      songs = data;
       widget.sort();
     } catch (e) {
       setState(() {

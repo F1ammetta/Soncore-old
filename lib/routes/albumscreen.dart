@@ -28,14 +28,13 @@ class _AlbumScreenState extends State<AlbumScreen> {
     if (songs.first['album'] != q.tag.album) {
       queue.clear();
       for (var song in songs) {
-        await queue.add(AudioSource.uri(
-            Uri.parse('http://kwak.sytes.net/tracks/${song['id']}'),
+        await queue.add(AudioSource.uri(Uri.parse('$url/tracks/${song['id']}'),
             tag: MediaItem(
               id: song['id'].toString(),
               title: song['title'],
               artist: song['artist'],
               album: song['album'],
-              artUri: Uri.parse('http://kwak.sytes.net/v0/cover/${song['id']}'),
+              artUri: Uri.parse('$url/v0/cover/${song['id']}'),
             )));
       }
     }
@@ -55,7 +54,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   Future<void> getalbum() async {
     try {
-      var res = await get(Uri.parse('http://kwak.sytes.net/v0/album/$album'));
+      var res = await get(Uri.parse('$url/v0/album/$album'));
       var body = utf8.decode(res.bodyBytes);
       var data = jsonDecode(body) as List;
       songs = data;
@@ -88,8 +87,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
               child: Center(
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(
-                          'http://kwak.sytes.net/v0/cover/$album')))),
+                      child: Image.network('$url/v0/cover/$album')))),
           Container(height: 20),
           Center(
               child: Text(

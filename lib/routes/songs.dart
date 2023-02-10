@@ -187,8 +187,7 @@ class _SongsPageState extends State<SongsPage> {
                           queue.insert(
                               player.currentIndex! + 1,
                               AudioSource.uri(
-                                Uri.parse(
-                                    'http://kwak.sytes.net/tracks/${children[i]['id']}'),
+                                Uri.parse('$url/tracks/${children[i]['id']}'),
                                 tag: MediaItem(
                                   id: children[i]['id'].toString(),
                                   album: children[i]['album'],
@@ -197,7 +196,7 @@ class _SongsPageState extends State<SongsPage> {
                                   duration: Duration(
                                       seconds: children[i]['duration'].toInt()),
                                   artUri: Uri.parse(
-                                      'http://kwak.sytes.net/v0/cover/${children[i]['id']}'),
+                                      '$url/v0/cover/${children[i]['id']}'),
                                 ),
                               ));
                         }
@@ -213,7 +212,7 @@ class _SongsPageState extends State<SongsPage> {
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
                           child: Image.network(
-                            'http://kwak.sytes.net/v0/cover/${children[i]['id']}',
+                            '$url/v0/cover/${children[i]['id']}',
                             height: 60,
                             width: 60,
                           ),

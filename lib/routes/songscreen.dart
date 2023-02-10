@@ -126,7 +126,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
                                     });
                                   },
                                   child: Image.network(
-                                    'http://kwak.sytes.net/v0/cover/${metadata.id}',
+                                    '$url/v0/cover/${metadata.id}',
                                     width: 350,
                                     height: 350,
                                   ),

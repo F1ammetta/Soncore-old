@@ -85,7 +85,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                           borderRadius:
                                               BorderRadius.circular(9.0),
                                           child: Image.network(
-                                            'http://kwak.sytes.net/v0/cover/${metadata.id}',
+                                            '$url/v0/cover/${metadata.id}',
                                             height: 50,
                                             width: 50,
                                           ),

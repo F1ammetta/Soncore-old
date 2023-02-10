@@ -40,7 +40,7 @@ class _QueuePageState extends State<QueuePage> {
                   leading: ClipRRect(
                     borderRadius: BorderRadius.circular(10.0),
                     child: Image.network(
-                      'http://kwak.sytes.net/v0/cover/${song.tag.id}',
+                      '$url/v0/cover/${song.tag.id}',
                       height: 60,
                       width: 60,
                     ),

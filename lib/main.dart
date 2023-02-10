@@ -11,7 +11,7 @@ import 'package:soncore/routes/routes.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 // ignore: unused_element
-
+const url = 'localhost:3334'; //'$url';
 final player = AudioPlayer();
 Color brandColor = Color(0XFF3BDFEB);
 
@@ -114,7 +114,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _getsongs() async {
     try {
-      var res = await get(Uri.parse('http://kwak.sytes.net/v0/all'));
+      var res = await get(Uri.parse('$url/v0/all'));
 
       var body = utf8.decode(res.bodyBytes);
       var data = jsonDecode(body) as List;
@@ -143,7 +143,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _getalbums() async {
     try {
-      var res = await get(Uri.parse('http://kwak.sytes.net/v0/album/all'));
+      var res = await get(Uri.parse('$url/v0/album/all'));
 
       var body = utf8.decode(res.bodyBytes);
       var data = jsonDecode(body) as List;
@@ -184,13 +184,13 @@ class _MyAppState extends State<MyApp> {
   //     icon = Icons.pause;
   //   });
   //   await queue
-  //       .add(AudioSource.uri(Uri.parse('http://kwak.sytes.net/tracks/$id'),
+  //       .add(AudioSource.uri(Uri.parse('$url/tracks/$id'),
   //           tag: MediaItem(
   //             id: id.toString(),
   //             title: nowplaying['title'],
   //             artist: nowplaying['artist'],
   //             album: nowplaying['album'],
-  //             artUri: Uri.parse('http://kwak.sytes.net/v0/cover/$id'),
+  //             artUri: Uri.parse('$url/v0/cover/$id'),
   //           )));
   //   await player.seekToNext();
   //   player.play();
@@ -200,14 +200,13 @@ class _MyAppState extends State<MyApp> {
     if (children.length != queue.length) {
       queue.clear();
       for (var song in children) {
-        await queue.add(AudioSource.uri(
-            Uri.parse('http://kwak.sytes.net/tracks/${song['id']}'),
+        await queue.add(AudioSource.uri(Uri.parse('$url/tracks/${song['id']}'),
             tag: MediaItem(
               id: song['id'].toString(),
               title: song['title'],
               artist: song['artist'],
               album: song['album'],
-              artUri: Uri.parse('http://kwak.sytes.net/v0/cover/${song['id']}'),
+              artUri: Uri.parse('$url/v0/cover/${song['id']}'),
             )));
       }
     }

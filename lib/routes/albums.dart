@@ -166,7 +166,7 @@ class _AlbumsPageState extends State<AlbumsPage> {
                     leading: ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
                       child: Image.network(
-                        'http://kwak.sytes.net/v0/cover/${albums[i]['id']}',
+                        '$url/v0/cover/${albums[i]['id']}',
                         height: 60,
                         width: 60,
                       ),

@@ -11,7 +11,7 @@ import 'package:soncore/routes/routes.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 
 // ignore: unused_element
-const url = 'localhost:3334'; //'$url';
+const url = 'https://kwak.sytes.net'; //'$url';
 final player = AudioPlayer();
 Color brandColor = Color(0XFF3BDFEB);
 
@@ -136,6 +136,10 @@ class _MyAppState extends State<MyApp> {
 
   void _sortAlbums() {
     var tem = albums;
+    tem.sort(((a, b) => a['title']
+        .toString()
+        .toUpperCase()
+        .compareTo(b['title'].toString().toUpperCase())));
     setState(() {
       albums = tem;
     });
@@ -215,7 +219,8 @@ class _MyAppState extends State<MyApp> {
           children.firstWhere((element) => element['id'] == id, orElse: (() {
         return null;
       }));
-      var index = children.indexOf(nowplaying);
+      var index = queue.sequence
+          .indexWhere((element) => element.tag.id == id.toString());
       player.seek(Duration.zero, index: index);
       player.play();
       hasplayed = true;

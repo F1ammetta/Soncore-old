@@ -38,27 +38,34 @@ class _AlbumScreenState extends State<AlbumScreen> {
             )));
       }
     }
+    for (var song in songs) {
+      if (song['id'] == id) {
+        setState(() {
+          nowplaying = song;
+        });
+        break;
+      }
+    }
     setState(() {
-      nowplaying =
-          songs.firstWhere((element) => element['id'] == id, orElse: (() {
-        return null;
-      }));
-      var index = songs.indexOf(nowplaying);
+      var index = queue.sequence
+          .indexWhere((element) => element.tag.id == id.toString());
       player.seek(Duration.zero, index: index);
       player.play();
       hasplayed = true;
       icon = Icons.pause;
     });
-    widget.update();
+    setState(() {
+      widget.update();
+    });
   }
 
   Future<void> getalbum() async {
     try {
       var res = await get(Uri.parse('$url/v0/album/$album'));
       var body = utf8.decode(res.bodyBytes);
-      var data = jsonDecode(body) as List;
-      songs = data;
-      widget.sort();
+      var data = jsonDecode(body);
+      var datalist = data['songs'];
+      songs = datalist;
     } catch (e) {
       setState(() {
         songs.clear();
@@ -100,18 +107,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   padding: const EdgeInsets.only(bottom: 80),
                   itemCount: songs.length,
                   itemBuilder: (context, i) {
-                    var sons = player.audioSource as ConcatenatingAudioSource;
-                    int? id;
-                    if (!(sons.length > songs.length)) {
-                      if (sons.length > 0 && queue.length == songs.length) {
-                        var son =
-                            sons[player.currentIndex ?? 0] as UriAudioSource;
-                        id = int.parse(son.tag.id);
-                      }
-                    }
-                    return songs.isNotEmpty
+                    return songs.isNotEmpty && i < songs.length
                         ? ListTile(
-                            selected: id == songs[i]['id'],
+                            selected: nowplaying['id'] == songs[i]['id'],
                             selectedTileColor: Theme.of(context).primaryColor,
                             title: Text(
                               songs[i]['title'],

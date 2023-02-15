@@ -9,7 +9,7 @@ import audio_service
 import audio_session
 import dynamic_color
 import just_audio
-import path_provider_foundation
+import path_provider_macos
 import sqflite
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

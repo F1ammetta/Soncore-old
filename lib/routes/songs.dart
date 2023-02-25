@@ -219,9 +219,7 @@ class _SongsPageState extends State<SongsPage> {
                         ),
                         trailing: Text(
                             '${(children[i]['duration'] / 60).floor() < 10 ? (children[i]['duration'] / 60).floor().toString().padLeft(2, '0') : (children[i]['duration'] / 60).floor()}:${(children[i]['duration'] % 60).floor() < 10 ? (children[i]['duration'] % 60).floor().toString().padLeft(2, '0') : (children[i]['duration'] % 60).floor()}'),
-                        onTap: () {
-                          plai(children[i]['id']);
-                        },
+                        onTap: () => plai(children[i]['id']),
                       ),
                     )
                   : const Center();

@@ -4,6 +4,7 @@ Music Streaming app desinged to work with the [Music Streaming Server](https://g
 
 # Screenshots
 
-![ss1](imgs/Screenshot_20230316-234611.png)
-![ss2](imgs/Screenshot_20230316-234456.png)
-![ss3](imgs/Screenshot_20230316-234542.png)
+<img src="imgs/Screenshot_20230316-234611.png" alt= “” width="50%" height="50%">
+<img src="imgs/Screenshot_20230316-234456.png" alt= “” width="50%" height="50%">
+<img src="imgs/Screenshot_20230316-234542.png" alt= “” width="50%" height="50%">
+

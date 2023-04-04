@@ -68,6 +68,8 @@ var hasplayed = false;
 
 var children = [];
 
+var fullalbums = [];
+
 var albums = [];
 
 var fullsongs = [];
@@ -115,9 +117,10 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getsongs() async {
     try {
       var res = await get(Uri.parse('$url/v0/all'));
-
+      // var body = res.body;
       var body = utf8.decode(res.bodyBytes);
-      var data = jsonDecode(body) as List;
+      var data = json.decode(body) as List;
+      // List<dynamic> data = jsonDecode(body) as List<dynamic>;
 
       setState(() {
         if (data.length != children.length) {
@@ -146,28 +149,25 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _getalbums() async {
-    try {
-      var res = await get(Uri.parse('$url/v0/album/all'));
-
-      var body = utf8.decode(res.bodyBytes);
-      var data = jsonDecode(body) as List;
+      var data = fullsongs;
+      var inserted = [];
       var temp = [];
-      for (var album in data) {
-        if (album == null) continue;
-        temp.add(album);
+      for (var i = 0; i < data.length; i++) {
+        if (data[i]['album'] != null) {
+          if (!inserted.contains(data[i]['album'])) {
+            temp.add({'title': data[i]['album'], 'artist': data[i]['artist'], 'id': data[i]['id'] });
+            inserted.add(data[i]['album']);
+          }
+        }
       }
+
       setState(() {
         if (temp.length != albums.length) {
           albums = temp;
+          fullalbums = temp;
         }
       });
       _sortAlbums();
-    } catch (err) {
-      setState(() {
-        albums.clear();
-        // children.add(emmpty);
-      });
-    }
   }
 
   Future<void> _getitems() async {
@@ -245,22 +245,28 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _showqueries(String query) {
-    setState(() {
+    if (selected == 2) {
       if (query.isEmpty) {
-        children = fullsongs;
+        albums = fullalbums;
         return;
       }
-      children = List.castFrom(fullsongs);
-      children = children.where((element) {
-        return element[selectedMenu.toString().split('.')[1]]
-            .toString()
-            .toLowerCase()
-            .contains(query.toLowerCase());
+      albums = List.castFrom(fullalbums);
+      albums = albums.where((element) {
+        return element['title'].toLowerCase().contains(query.toLowerCase());
       }).toList();
-      // if (children.isEmpty) children.add(emmpty);
-      // children.removeWhere((element) {
-      // });
-    });
+      return;
+    }
+    if (query.isEmpty) {
+      children = fullsongs;
+      return;
+    }
+    children = List.castFrom(fullsongs);
+    children = children.where((element) {
+      return element[selectedMenu.toString().split('.')[1]]
+          .toString()
+          .toLowerCase()
+          .contains(query.toLowerCase());
+    }).toList();
   }
 
   void _raisefrac() {

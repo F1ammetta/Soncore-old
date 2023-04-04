@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:soncore/main.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -24,9 +22,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   var songs = [];
 
   Future<void> _play(id) async {
-    var q = queue[0] as UriAudioSource;
-    if (songs.first['album'] != q.tag.album) {
-      queue.clear();
+    if (queue.children.isEmpty) {
       for (var song in songs) {
         await queue.add(AudioSource.uri(Uri.parse('$url/tracks/${song['id']}'),
             tag: MediaItem(
@@ -36,6 +32,22 @@ class _AlbumScreenState extends State<AlbumScreen> {
               album: song['album'],
               artUri: Uri.parse('$url/v0/cover/${song['id']}'),
             )));
+      }
+    }
+    else {
+      var q = queue[0] as UriAudioSource;
+      if (songs.first['album'] != q.tag.album) {
+        queue.clear();
+        for (var song in songs) {
+          await queue.add(AudioSource.uri(Uri.parse('$url/tracks/${song['id']}'),
+            tag: MediaItem(
+              id: song['id'].toString(),
+              title: song['title'],
+              artist: song['artist'],
+              album: song['album'],
+              artUri: Uri.parse('$url/v0/cover/${song['id']}'),
+          )));
+        }
       }
     }
     for (var song in songs) {
@@ -60,19 +72,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
   }
 
   Future<void> getalbum() async {
-    try {
-      var res = await get(Uri.parse('$url/v0/album/$album'));
-      var body = utf8.decode(res.bodyBytes);
-      var data = jsonDecode(body);
-      var datalist = data['songs'];
-      songs = datalist;
-    } catch (e) {
-      setState(() {
-        songs.clear();
-      });
-    }
-    setState(() {});
-    widget.update();
+    var albumtitle = children.firstWhere((element) => element['id'] == album)['album'];
+    var data = fullsongs.where((element) => element['album'] == albumtitle);
+    songs = data.toList();
   }
 
   @override
@@ -109,7 +111,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   itemBuilder: (context, i) {
                     return songs.isNotEmpty && i < songs.length
                         ? ListTile(
-                            selected: nowplaying['id'] == songs[i]['id'],
+                            selected: nowplaying != null? nowplaying['id'] == songs[i]['id'] : false,
                             selectedTileColor: Theme.of(context).primaryColor,
                             title: Text(
                               songs[i]['title'],

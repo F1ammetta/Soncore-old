@@ -169,6 +169,7 @@ class _AlbumsPageState extends State<AlbumsPage> {
                         '$url/v0/cover/${albums[i]['id']}',
                         height: 60,
                         width: 60,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   )

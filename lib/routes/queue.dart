@@ -43,6 +43,7 @@ class _QueuePageState extends State<QueuePage> {
                       '$url/v0/cover/${song.tag.id}',
                       height: 60,
                       width: 60,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   trailing: IconButton(

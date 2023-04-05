@@ -96,7 +96,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
               child: Center(
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network('$url/v0/cover/$album')))),
+                      child: Image.network('$url/v0/cover/$album', fit: BoxFit.cover)))),
           Container(height: 20),
           Center(
               child: Text(

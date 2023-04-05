@@ -215,6 +215,7 @@ class _SongsPageState extends State<SongsPage> {
                             '$url/v0/cover/${children[i]['id']}',
                             height: 60,
                             width: 60,
+                            fit: BoxFit.cover,
                           ),
                         ),
                         trailing: Text(

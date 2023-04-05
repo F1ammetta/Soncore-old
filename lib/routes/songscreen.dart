@@ -127,6 +127,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
                                     '$url/v0/cover/${metadata.id}',
                                     width: 350,
                                     height: 350,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
@@ -302,7 +303,7 @@ class _PlayingScreenState extends State<PlayingScreen> {
                             child: Center(
                                 child: Text(
                                     nowplaying['lyrics'] != null
-                                        ? nowplaying['lyrics'][0] ??
+                                        ? nowplaying['lyrics'] ??
                                             'No Lyrics Found'
                                         : 'No Lyrics Found',
                                     style: const TextStyle(fontSize: 20))),

@@ -88,6 +88,7 @@ class _NowPlayingState extends State<NowPlaying> {
                                             '$url/v0/cover/${metadata.id}',
                                             height: 50,
                                             width: 50,
+                                            fit: BoxFit.cover,
                                           ),
                                         ),
                                       ),

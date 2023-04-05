@@ -119,9 +119,17 @@ class _MyAppState extends State<MyApp> {
       var res = await get(Uri.parse('$url/v0/all'));
       // var body = res.body;
       var body = utf8.decode(res.bodyBytes);
-      var data = json.decode(body) as List;
+      var data = json.decode(body,
+        reviver: (key, value) {
+          if (key == 'lyrics') {
+            return value.toString().replaceAll('\\n', '\n');
+          }
+          else {
+            return value;
+          }
+        }
+      ) as List;
       // List<dynamic> data = jsonDecode(body) as List<dynamic>;
-
       setState(() {
         if (data.length != children.length) {
           children = data;
